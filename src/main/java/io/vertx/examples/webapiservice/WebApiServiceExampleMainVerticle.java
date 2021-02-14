@@ -5,6 +5,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.MessageConsumer;
+import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
@@ -12,7 +13,6 @@ import io.vertx.examples.webapiservice.persistence.ServicePersistence;
 import io.vertx.examples.webapiservice.services.ServicesManagerService;
 import io.vertx.examples.webapiservice.services.ServicesPoller;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.openapi.RouterBuilder;
 import io.vertx.serviceproxy.ServiceBinder;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
   }
 
   private void startServicesPoller(ServicePersistence persistence) {
-    WebClient client = WebClient.create(vertx);
+    HttpClient client = vertx.createHttpClient();
     ServicesPoller servicesPoller = ServicesPoller.create(persistence, client);
     vertx.setPeriodic(3000, id -> servicesPoller.poll());
     consumer = serviceBinder

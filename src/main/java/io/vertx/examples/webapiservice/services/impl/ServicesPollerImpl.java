@@ -1,22 +1,20 @@
 package io.vertx.examples.webapiservice.services.impl;
 
-import io.vertx.core.buffer.Buffer;
+import io.vertx.core.http.HttpClient;
+import io.vertx.core.http.HttpClientRequest;
+import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.examples.webapiservice.models.Service;
 import io.vertx.examples.webapiservice.persistence.ServicePersistence;
-import io.vertx.examples.webapiservice.services.ServicesManagerService;
 import io.vertx.examples.webapiservice.services.ServicesPoller;
-import io.vertx.ext.web.client.HttpResponse;
-import io.vertx.ext.web.client.WebClient;
-import io.vertx.ext.web.client.predicate.ResponsePredicate;
 
 import java.util.List;
 import java.util.Optional;
 
 public class ServicesPollerImpl implements ServicesPoller {
   ServicePersistence persistence;
-  WebClient client;
-  public ServicesPollerImpl(ServicePersistence persistence, WebClient client) {
+  HttpClient client;
+  public ServicesPollerImpl(ServicePersistence persistence, HttpClient client) {
     this.persistence = persistence;
     this.client = client;
   }
@@ -25,22 +23,33 @@ public class ServicesPollerImpl implements ServicesPoller {
   public void poll() {
     Optional<List<Service>> servicesOpt = persistence.getServices();
     List<Service> services = servicesOpt.get();
-    services.forEach(s -> makeCall(s));
+    services.forEach(s -> makeServiceCheck(s));
   }
 
-  private void makeCall(Service service) {
+  private void setServiceStatus(Service service, boolean isOk) {
+    service.setIsOk(isOk);
+    persistence.updateService(service.getId(), service);
+  }
+
+  private void makeServiceCheck(Service service) {
     System.out.println("calling " + service.getUrl());
-//    HttpRequest req = client.get(service.getUrl()).expect(ResponsePredicate.SC_OK);
-//    client.get(service.getUrl()).send(ar -> {
-//      if (ar.succeeded()) {
-//        HttpResponse<Buffer> response = ar.result();
-//        System.out.println("Got HTTP response with status " + response.statusCode());
-//      } else {
-//        ar.cause().printStackTrace();
-//      }
-//    });
-//    client.requestAbs(HttpMethod.GET, service.getUrl(), res -> {
-//      System.out.println(res.toString());
-//    });
+    client.request(HttpMethod.GET,80, service.getUrl(), "/", ar1 -> {
+      if (ar1.succeeded()) {
+        HttpClientRequest request = ar1.result();
+        request.send(ar2 -> {
+          if (ar2.succeeded()) {
+            HttpClientResponse response = ar2.result();
+            System.out.println("Received response with status code " + response.statusCode());
+            setServiceStatus(service, true);
+          } else {
+            ar2.cause().printStackTrace();
+            setServiceStatus(service, false);
+          }
+        });
+      } else {
+        ar1.cause().printStackTrace();
+        setServiceStatus(service, false);
+      }
+    });
   }
 }

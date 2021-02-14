@@ -10,15 +10,18 @@ public class Service {
   private String id;
   private String url;
   private String userId;
+  private boolean isOk;
 
   public Service(
     String id,
     String url,
-    String userId
+    String userId,
+    boolean isOk
   ) {
     this.id = id;
     this.url = url;
     this.userId = userId;
+    this.isOk = isOk;
   }
 
   public Service(JsonObject json) {
@@ -29,6 +32,7 @@ public class Service {
     this.id = other.getId();
     this.url = other.getUrl();
     this.userId = other.getUserId();
+    this.isOk = other.getIsOk();
   }
 
   public JsonObject toJson() {
@@ -59,5 +63,13 @@ public class Service {
   }
   public String getUserId() {
     return this.userId;
+  }
+
+  @Fluent public Service setIsOk(boolean isOk){
+    this.isOk = isOk;
+    return this;
+  }
+  public boolean getIsOk() {
+    return this.isOk;
   }
 }

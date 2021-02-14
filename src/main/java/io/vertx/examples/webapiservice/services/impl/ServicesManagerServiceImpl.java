@@ -81,7 +81,7 @@ public class ServicesManagerServiceImpl implements ServicesManagerService {
     String serviceId,
     ServiceRequest request, Handler<AsyncResult<ServiceResponse>> resultHandler) {
     if (persistence.removeService(serviceId))
-      resultHandler.handle(Future.succeededFuture(new ServiceResponse().setStatusCode(404).setStatusMessage("OK")));
+      resultHandler.handle(Future.succeededFuture(new ServiceResponse().setStatusCode(204).setStatusMessage("No Content")));
     else
       resultHandler.handle(Future.succeededFuture(new ServiceResponse().setStatusCode(404).setStatusMessage("Not Found")));
   }

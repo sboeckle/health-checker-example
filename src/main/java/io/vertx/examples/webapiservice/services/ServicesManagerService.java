@@ -37,12 +37,12 @@ public interface ServicesManagerService {
       ServiceRequest request, Handler<AsyncResult<ServiceResponse>> resultHandler);
 
   void updateService(
-    String transactionId,
+    String serviceId,
     Service body,
     ServiceRequest request, Handler<AsyncResult<ServiceResponse>> resultHandler);
 
   void deleteService(
-    String transactionId,
+    String serviceId,
     ServiceRequest request, Handler<AsyncResult<ServiceResponse>> resultHandler);
 
 }

@@ -1,0 +1,161 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Services API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/services": {
+      "get": {
+        "operationId": "getServiceList",
+        "x-vertx-event-bus": "services_manager.myapp",
+        "parameters": [
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Service"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something wrong happened"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createService",
+        "x-vertx-event-bus": "services_manager.myapp",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Service"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "500": {
+            "description": "Something wrong happened"
+          }
+        }
+      }
+    },
+    "/api/services/{serviceId}": {
+      "parameters": [
+        {
+          "name": "serviceId",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getService",
+        "x-vertx-event-bus": "services_manager.myapp",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something wrong happened"
+          }
+        }
+      },
+      "put": {
+        "operationId": "updateService",
+        "x-vertx-event-bus": "services_manager.myapp",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Service"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Something wrong happened"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteService",
+        "x-vertx-event-bus": "services_manager.myapp",
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "500": {
+            "description": "Something wrong happened"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Service": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "url",
+          "userId"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

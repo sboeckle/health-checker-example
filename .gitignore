@@ -1,0 +1,10 @@
+target/
+.settings
+
+# Ignore VertX file cache
+.vertx/
+
+.idea/
+*.iml
+
+No-code_home_test_-_Kry.pdf

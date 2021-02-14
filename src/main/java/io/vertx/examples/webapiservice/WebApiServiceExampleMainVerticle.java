@@ -10,7 +10,9 @@ import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.json.JsonObject;
 import io.vertx.examples.webapiservice.persistence.ServicePersistence;
 import io.vertx.examples.webapiservice.services.ServicesManagerService;
+import io.vertx.examples.webapiservice.services.ServicesPoller;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.openapi.RouterBuilder;
 import io.vertx.serviceproxy.ServiceBinder;
 import org.slf4j.Logger;
@@ -24,16 +26,22 @@ public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
   MessageConsumer<JsonObject> consumer;
   Logger LOG = LoggerFactory.getLogger(this.getClass());
 
-  private void startServicesManager() {
-    serviceBinder = new ServiceBinder(vertx);
-
-    ServicePersistence persistence = ServicePersistence.create();
+  private void startServicesManager(ServicePersistence persistence) {
 
     // Create service and mount to event bus
     ServicesManagerService servicesManagerService = ServicesManagerService.create(persistence);
     consumer = serviceBinder
         .setAddress("services_manager.myapp")
         .register(ServicesManagerService.class, servicesManagerService);
+  }
+
+  private void startServicesPoller(ServicePersistence persistence) {
+    WebClient client = WebClient.create(vertx);
+    ServicesPoller servicesPoller = ServicesPoller.create(persistence, client);
+    vertx.setPeriodic(3000, id -> servicesPoller.poll());
+    consumer = serviceBinder
+        .setAddress("services_poller.myapp")
+        .register(ServicesPoller.class, servicesPoller);
   }
 
   /**
@@ -59,7 +67,10 @@ public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> promise) {
-    startServicesManager();
+    serviceBinder = new ServiceBinder(vertx);
+    ServicePersistence persistence = ServicePersistence.create();
+    startServicesManager(persistence);
+    startServicesPoller(persistence);
     startHttpServer().onComplete(promise);
   }
 

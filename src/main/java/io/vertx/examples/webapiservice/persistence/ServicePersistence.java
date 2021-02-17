@@ -1,5 +1,6 @@
 package io.vertx.examples.webapiservice.persistence;
 
+import io.vertx.core.Vertx;
 import io.vertx.examples.webapiservice.models.Service;
 import io.vertx.examples.webapiservice.persistence.impl.ServicePersistenceImpl;
 
@@ -19,8 +20,8 @@ public interface ServicePersistence {
    *
    * @return
    */
-  static ServicePersistence create() {
-    return new ServicePersistenceImpl();
+  static ServicePersistence create(Vertx vertx) {
+    return new ServicePersistenceImpl(vertx);
   }
 
   List<Service> getFilteredServices(Predicate<Service> p);

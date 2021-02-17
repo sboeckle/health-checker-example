@@ -134,18 +134,29 @@
           "id": {
             "type": "string"
           },
+          "name": {
+            "type": "string"
+          },
           "url": {
             "type": "string"
           },
           "userId": {
             "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false,
         "required": [
           "id",
-          "url",
-          "userId"
+          "name",
+          "url"
         ]
       },
       "User": {

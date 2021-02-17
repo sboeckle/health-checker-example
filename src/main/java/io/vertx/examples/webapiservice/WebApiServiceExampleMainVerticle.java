@@ -27,7 +27,6 @@ public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
   Logger LOG = LoggerFactory.getLogger(this.getClass());
 
   private void startServicesManager(ServicePersistence persistence) {
-
     // Create service and mount to event bus
     ServicesManagerService servicesManagerService = ServicesManagerService.create(persistence);
     consumer = serviceBinder
@@ -68,7 +67,7 @@ public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
   @Override
   public void start(Promise<Void> promise) {
     serviceBinder = new ServiceBinder(vertx);
-    ServicePersistence persistence = ServicePersistence.create();
+    ServicePersistence persistence = ServicePersistence.create(vertx);
     startServicesManager(persistence);
     startServicesPoller(persistence);
     startHttpServer().onComplete(promise);

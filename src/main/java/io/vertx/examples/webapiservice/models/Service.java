@@ -7,9 +7,12 @@ import io.vertx.core.json.JsonObject;
 @DataObject(generateConverter = true, publicConverter = false)
 public class Service {
 
+  private String name;
   private String id;
   private String url;
   private String userId;
+  private String createdAt;
+  private String updatedAt;
   private boolean isOk;
 
   public Service(
@@ -30,9 +33,12 @@ public class Service {
 
   public Service(Service other) {
     this.id = other.getId();
+    this.name = other.name;
     this.url = other.getUrl();
     this.userId = other.getUserId();
     this.isOk = other.getIsOk();
+    this.createdAt = other.getCreatedAt();
+    this.updatedAt = other.getUpdatedAt();
   }
 
   public JsonObject toJson() {
@@ -72,4 +78,31 @@ public class Service {
   public boolean getIsOk() {
     return this.isOk;
   }
+
+  @Fluent
+  public Service setName(String name) {
+    this.name = name;
+    return this;
+  }
+  public String getName() {
+    return name;
+  }
+
+  @Fluent
+  public Service setCreatedAt(String createdAt) {
+    this.createdAt = createdAt;
+    return this;
+  }
+  public String getCreatedAt() {return createdAt;}
+
+  @Fluent
+  public Service setUpdatedAt(String updatedAt) {
+    this.updatedAt = updatedAt;
+    return this;
+  }
+  public String getUpdatedAt() {return updatedAt;}
+
+
+
+
 }

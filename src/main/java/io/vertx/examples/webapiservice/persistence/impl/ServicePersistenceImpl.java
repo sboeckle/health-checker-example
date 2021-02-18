@@ -6,8 +6,12 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.examples.webapiservice.models.Service;
 import io.vertx.examples.webapiservice.persistence.ServicePersistence;
 
+import java.io.File;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.OpenOption;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.jar.Attributes;
 import java.util.stream.Collectors;
 
 import java.io.IOException;
@@ -25,13 +29,27 @@ public class ServicePersistenceImpl implements ServicePersistence {
     public ServicePersistenceImpl(Vertx vertx) {
         this.vertx = vertx;
         services = new HashMap<String, Service>();
+        initPersistance();
         readFromFile();
+    }
+
+    private void initPersistance() {
+      try {
+        Files.createFile(Path.of(fileName));
+      } catch (FileAlreadyExistsException e) {
+        System.out.println("Persistence file already exists");
+      } catch (IOException ioe) {
+        System.err.println("Error reading from persistence file");
+        ioe.printStackTrace();
+      }
     }
 
     private void readFromFile() {
         try {
-          String servicesAsString = null;
-          servicesAsString = Files.readString(Path.of(fileName));
+          String servicesAsString = Files.readString(Path.of(fileName));
+          if (servicesAsString.equals("")) {
+            servicesAsString = "{}";
+          }
           JSONObject jsonO = new JSONObject(servicesAsString);
           jsonO.keySet().forEach(k -> {
             JSONObject o = (JSONObject) jsonO.get(k);
@@ -39,26 +57,27 @@ public class ServicePersistenceImpl implements ServicePersistence {
             services.put(k, s);
           });
         } catch (IOException e) {
-          System.err.println("EROROROR: " + e.getMessage());
+          System.err.println("Error reading from persistence file");
+          e.printStackTrace();
         }
     }
 
-      private void saveToFile() {
-        // use JSONObject for simple parsing of Map -> String
-        JSONObject jsonO = new JSONObject(services);
-        JsonObject json = new JsonObject(jsonO.toString());
-        vertx.fileSystem().writeFile(
-            fileName,
-            Buffer.buffer(json.toString()),
-            result -> {
-              if (result.succeeded()) {
-                System.out.println("wrote it" + result.toString());
-              } else {
-                System.err.println("did" +
-                    " not write it");
-              }
-            });
-      }
+    private void saveToFile() {
+      // use JSONObject for simple parsing of Map -> String
+      JSONObject jsonO = new JSONObject(services);
+      JsonObject json = new JsonObject(jsonO.toString());
+      vertx.fileSystem().writeFile(
+          fileName,
+          Buffer.buffer(json.toString()),
+          result -> {
+            if (result.succeeded()) {
+              System.out.println("wrote it" + result.toString());
+            } else {
+              System.err.println("did" +
+                  " not write it");
+            }
+          });
+    }
 
     @Override
     public List<Service> getFilteredServices(Predicate<Service> p) {
@@ -67,7 +86,6 @@ public class ServicePersistenceImpl implements ServicePersistence {
 
     @Override
     public Optional<List<Service>> getServices() {
-      readFromFile();
       return Optional.of(new ArrayList<>(services.values()));
     }
 
@@ -77,14 +95,14 @@ public class ServicePersistenceImpl implements ServicePersistence {
     }
 
     @Override
-      public Service addService(Service t) {
-        Date now = new Date();
-        t.setCreatedAt(now.toString());
-        t.setUpdatedAt(now.toString());
-        services.put(t.getId(), t);
-        saveToFile();
-        return t;
-      }
+    public Service addService(Service t) {
+      Date now = new Date();
+      t.setCreatedAt(now.toString());
+      t.setUpdatedAt(now.toString());
+      services.put(t.getId(), t);
+      saveToFile();
+      return t;
+    }
 
     @Override
     public boolean removeService(String serviceId) {

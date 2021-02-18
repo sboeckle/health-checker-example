@@ -27,8 +27,7 @@ public class ServicesPollerImpl implements ServicesPoller {
   }
 
   private void setServiceStatus(Service service, boolean isOk) {
-    String status = isOk ? "OK" : "FAIL";
-    service.setStatus(status);
+    service.setStatus(isOk ? "OK" : "FAIL");
     persistence.updateService(service.getId(), service);
   }
 

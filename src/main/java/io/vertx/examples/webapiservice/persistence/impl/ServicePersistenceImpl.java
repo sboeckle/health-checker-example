@@ -98,12 +98,12 @@ public class ServicePersistenceImpl implements ServicePersistence {
 
     @Override
     public boolean updateService(String serviceId, Service service) {
+      Service current = services.get(serviceId);
+      if (current == null) { return false; }
+      service.setCreatedAt(current.getCreatedAt());
       service.setUpdatedAt(new Date().toString());
-      Service t = services.replace(serviceId, service);
-      if (t != null) {
-        saveToFile();
-        return true;
-      }
-      else return false;
+      services.replace(serviceId, service);
+      saveToFile();
+      return true;
     }
 }

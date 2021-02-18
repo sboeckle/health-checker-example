@@ -140,6 +140,9 @@
           "url": {
             "type": "string"
           },
+          "status": {
+            "type": "string"
+          },
           "userId": {
             "type": "string"
           },

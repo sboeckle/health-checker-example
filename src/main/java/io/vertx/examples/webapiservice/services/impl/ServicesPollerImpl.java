@@ -27,19 +27,17 @@ public class ServicesPollerImpl implements ServicesPoller {
   }
 
   private void setServiceStatus(Service service, boolean isOk) {
-    service.setIsOk(isOk);
+    String status = isOk ? "OK" : "FAIL";
+    service.setStatus(status);
     persistence.updateService(service.getId(), service);
   }
 
   private void makeServiceCheck(Service service) {
-    System.out.println("calling " + service.getUrl());
     client.request(HttpMethod.GET,80, service.getUrl(), "/", ar1 -> {
       if (ar1.succeeded()) {
         HttpClientRequest request = ar1.result();
         request.send(ar2 -> {
           if (ar2.succeeded()) {
-            HttpClientResponse response = ar2.result();
-            System.out.println("Received response with status code " + response.statusCode());
             setServiceStatus(service, true);
           } else {
             ar2.cause().printStackTrace();

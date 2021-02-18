@@ -11,20 +11,20 @@ public class Service {
   private String id;
   private String url;
   private String userId;
+  private String status;
   private String createdAt;
   private String updatedAt;
-  private boolean isOk;
 
   public Service(
     String id,
     String url,
     String userId,
-    boolean isOk
+    String status
   ) {
     this.id = id;
     this.url = url;
     this.userId = userId;
-    this.isOk = isOk;
+    this.status = status;
   }
 
   public Service(JsonObject json) {
@@ -36,7 +36,7 @@ public class Service {
     this.name = other.name;
     this.url = other.getUrl();
     this.userId = other.getUserId();
-    this.isOk = other.getIsOk();
+    this.status = other.getStatus();
     this.createdAt = other.getCreatedAt();
     this.updatedAt = other.getUpdatedAt();
   }
@@ -71,14 +71,6 @@ public class Service {
     return this.userId;
   }
 
-  @Fluent public Service setIsOk(boolean isOk){
-    this.isOk = isOk;
-    return this;
-  }
-  public boolean getIsOk() {
-    return this.isOk;
-  }
-
   @Fluent
   public Service setName(String name) {
     this.name = name;
@@ -101,6 +93,13 @@ public class Service {
     return this;
   }
   public String getUpdatedAt() {return updatedAt;}
+
+  @Fluent
+  public Service setStatus(String status) {
+    this.status = status;
+    return this;
+  }
+  public String getStatus() {return status;}
 
 
 

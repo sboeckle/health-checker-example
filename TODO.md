@@ -1,0 +1,5 @@
+- make things configureable
+  - polling time
+  - address and ports of service and app
+- use DB as persistance
+  - then services userId can be used for multi user support

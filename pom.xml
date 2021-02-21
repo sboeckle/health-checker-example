@@ -6,13 +6,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.vertx</groupId>
-  <artifactId>web-api-service-example</artifactId>
+  <artifactId>health-checker-service</artifactId>
   <version>4.0.2</version>
 
   <name>Web Api Service example</name>
 
   <properties>
-    <main.verticle>io.vertx.examples.webapiservice.WebApiServiceExampleMainVerticle</main.verticle>
+    <main.verticle>io.vertxwebapiservice.WebApiServiceMainVerticle</main.verticle>
   </properties>
 
 

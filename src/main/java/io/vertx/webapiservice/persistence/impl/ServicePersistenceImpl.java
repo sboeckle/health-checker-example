@@ -1,10 +1,10 @@
-package io.vertx.examples.webapiservice.persistence.impl;
+package io.vertxwebapiservice.persistence.impl;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonObject;
-import io.vertx.examples.webapiservice.models.Service;
-import io.vertx.examples.webapiservice.persistence.ServicePersistence;
+import io.vertxwebapiservice.models.Service;
+import io.vertxwebapiservice.persistence.ServicePersistence;
 
 import java.nio.file.FileAlreadyExistsException;
 import java.util.*;

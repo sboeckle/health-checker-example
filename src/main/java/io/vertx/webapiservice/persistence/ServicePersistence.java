@@ -1,8 +1,8 @@
-package io.vertx.examples.webapiservice.persistence;
+package io.vertxwebapiservice.persistence;
 
 import io.vertx.core.Vertx;
-import io.vertx.examples.webapiservice.models.Service;
-import io.vertx.examples.webapiservice.persistence.impl.ServicePersistenceImpl;
+import io.vertxwebapiservice.models.Service;
+import io.vertxwebapiservice.persistence.impl.ServicePersistenceImpl;
 
 import java.util.List;
 import java.util.Optional;

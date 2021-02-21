@@ -1,12 +1,12 @@
-package io.vertx.examples.webapiservice;
+package io.vertxwebapiservice;
 
 import io.vertx.core.*;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.http.*;
 import io.vertx.core.json.JsonObject;
-import io.vertx.examples.webapiservice.persistence.ServicePersistence;
-import io.vertx.examples.webapiservice.services.ServicesManagerService;
-import io.vertx.examples.webapiservice.services.ServicesPoller;
+import io.vertxwebapiservice.persistence.ServicePersistence;
+import io.vertxwebapiservice.services.ServicesManagerService;
+import io.vertxwebapiservice.services.ServicesPoller;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.CorsHandler;
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashSet;
 import java.util.Set;
 
-public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
+public class WebApiServiceMainVerticle extends AbstractVerticle {
 
   HttpServer server;
   ServiceBinder serviceBinder;
@@ -107,7 +107,7 @@ public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
 
   public static void main(String[] args) {
     Vertx vertx = Vertx.vertx();
-    vertx.deployVerticle(new WebApiServiceExampleMainVerticle());
+    vertx.deployVerticle(new WebApiServiceMainVerticle());
   }
 
 }

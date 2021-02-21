@@ -1,12 +1,12 @@
-package io.vertx.examples.webapiservice.services.impl;
+package io.vertxwebapiservice.services.impl;
 
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
-import io.vertx.examples.webapiservice.models.Service;
-import io.vertx.examples.webapiservice.persistence.ServicePersistence;
-import io.vertx.examples.webapiservice.services.ServicesManagerService;
+import io.vertxwebapiservice.models.Service;
+import io.vertxwebapiservice.persistence.ServicePersistence;
+import io.vertxwebapiservice.services.ServicesManagerService;
 import io.vertx.ext.web.api.service.ServiceRequest;
 import io.vertx.ext.web.api.service.ServiceResponse;
 

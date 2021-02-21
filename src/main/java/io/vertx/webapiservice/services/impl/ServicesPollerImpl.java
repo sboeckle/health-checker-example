@@ -1,12 +1,12 @@
-package io.vertx.examples.webapiservice.services.impl;
+package io.vertxwebapiservice.services.impl;
 
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.examples.webapiservice.models.Service;
-import io.vertx.examples.webapiservice.persistence.ServicePersistence;
-import io.vertx.examples.webapiservice.services.ServicesPoller;
+import io.vertxwebapiservice.models.Service;
+import io.vertxwebapiservice.persistence.ServicePersistence;
+import io.vertxwebapiservice.services.ServicesPoller;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +32,7 @@ public class ServicesPollerImpl implements ServicesPoller {
   }
 
   private void makeServiceCheck(Service service) {
-    client.request(HttpMethod.GET,80, service.getUrl(), "/", ar1 -> {
+    client.request(HttpMethod.GET, 80, service.getUrl(), "/", ar1 -> {
       if (ar1.succeeded()) {
         HttpClientRequest request = ar1.result();
         request.send(ar2 -> {

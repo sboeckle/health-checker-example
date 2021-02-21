@@ -1,4 +1,4 @@
-package io.vertx.examples.webapiservice.models;
+package io.vertxwebapiservice.models;
 
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.codegen.annotations.Fluent;

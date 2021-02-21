@@ -6,12 +6,9 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.examples.webapiservice.models.Service;
 import io.vertx.examples.webapiservice.persistence.ServicePersistence;
 
-import java.io.File;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.OpenOption;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.jar.Attributes;
 import java.util.stream.Collectors;
 
 import java.io.IOException;

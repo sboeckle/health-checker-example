@@ -1,22 +1,23 @@
 package io.vertx.examples.webapiservice;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Future;
-import io.vertx.core.Promise;
-import io.vertx.core.Vertx;
+import io.vertx.core.*;
 import io.vertx.core.eventbus.MessageConsumer;
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpServer;
-import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.http.*;
 import io.vertx.core.json.JsonObject;
 import io.vertx.examples.webapiservice.persistence.ServicePersistence;
 import io.vertx.examples.webapiservice.services.ServicesManagerService;
 import io.vertx.examples.webapiservice.services.ServicesPoller;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.CorsHandler;
+import io.vertx.ext.web.openapi.OpenAPILoaderOptions;
 import io.vertx.ext.web.openapi.RouterBuilder;
 import io.vertx.serviceproxy.ServiceBinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
 
@@ -44,22 +45,44 @@ public class WebApiServiceExampleMainVerticle extends AbstractVerticle {
   }
 
   /**
+   * Configure router with CORS support for REST APIs. Allows * for now
+   * @return
+   */
+  private void configureCors(Router router) {
+    Set<String> allowedHeaders = new HashSet<>();
+    allowedHeaders.add("x-requested-with");
+    allowedHeaders.add("Access-Control-Allow-Origin");
+    allowedHeaders.add("origin");
+    allowedHeaders.add("Content-Type");
+    allowedHeaders.add("accept");
+
+    Set<HttpMethod> allowedMethods = new HashSet<>();
+    allowedMethods.add(HttpMethod.GET);
+    allowedMethods.add(HttpMethod.POST);
+    allowedMethods.add(HttpMethod.OPTIONS);
+    allowedMethods.add(HttpMethod.DELETE);
+    allowedMethods.add(HttpMethod.PATCH);
+    allowedMethods.add(HttpMethod.PUT);
+    router.route().handler(CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods));
+  }
+
+  /**
    * This method constructs the router factory, mounts services and handlers and starts the http server with built router
    * @return
    */
   private Future<Void> startHttpServer() {
+    Router mainRouter = Router.router(vertx);
+    configureCors(mainRouter);
     return RouterBuilder.create(this.vertx, "openapi.json")
       .onFailure(Throwable::printStackTrace) // In case the contract loading failed print the stacktrace
       .compose(routerBuilder -> {
-        // Mount services on event bus based on extensions
         routerBuilder.mountServicesFromExtensions();
-
-        // Generate the router
-        Router router = routerBuilder.createRouter();
-        router.errorHandler(400, ctx -> {
+        Router apiRouter = routerBuilder.createRouter();
+        apiRouter.errorHandler(400, ctx -> {
           LOG.debug("Bad Request", ctx.failure());
         });
-        server = vertx.createHttpServer(new HttpServerOptions().setPort(8080).setHost("localhost")).requestHandler(router);
+        mainRouter.mountSubRouter("/", apiRouter);
+        server = vertx.createHttpServer(new HttpServerOptions().setPort(8080).setHost("localhost")).requestHandler(mainRouter);
         return server.listen().mapEmpty();
       });
   }

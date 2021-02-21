@@ -61,34 +61,46 @@ function App() {
          })
   }, [])
 
-  const validateServiceFields = (data) => {
+  const validateServiceFields = (service) => {
     let errorList = []
-    if(!data.id || data.id === ""){
+    if(!service.id || service.id === ""){
       errorList.push("Please set id")
     }
-    if(!data.name || data.name === ""){
+    if(!service.name || service.name === ""){
       errorList.push("Please set name")
     }
-    if(!data.url || data.url === ""){
+    if(!service.url || service.url === ""){
       errorList.push("Please set url")
     }
     return errorList
   }
 
+  /**
+   * removes fields not ment to sent on writing calls
+   * @param {*} service 
+   */
+  const sanitizeWriteParams = (service) => {
+    const updateFields = {...service};
+    delete updateFields.updatedAt;
+    delete updateFields.createdAt;
+    return updateFields;
+  }
+
   const handleRowUpdate = (newData, oldData, resolve) => {
     let errorList = validateServiceFields(newData);
+    const updateData = sanitizeWriteParams(newData)
     if(errorList.length < 1){
-      api.put("/services/"+newData.id, newData)
+      api.put("/services/"+newData.id, updateData)
       .then(res => {
-        const updatedService = [...data];
-        const index = oldData.tableData.id;
-        updatedService[index] = newData;
-        setData([...updatedService]);
+        const tmp = [...data];
+        tmp[oldData.tableData.id] = res.data;
+        setData([...tmp]);
         resolve()
         setIserror(false)
         setErrorMessages([])
       })
       .catch(error => {
+        console.log(error);
         setErrorMessages(["Update failed! Server error"])
         setIserror(true)
         resolve()
@@ -102,20 +114,19 @@ function App() {
   }
 
   const handleRowAdd = (newData, resolve) => {
-    //validation
     let errorList = validateServiceFields(newData);
     if(errorList.length < 1){
       api.post("/services", newData)
       .then(res => {
-        console.log(res.data);
-        let dataToAdd = [...data];
-        dataToAdd.push(newData);
-        setData(dataToAdd);
+        let tmp = [...data];
+        tmp.push(res.data);
+        setData(tmp);
         resolve()
         setErrorMessages([])
         setIserror(false)
       })
       .catch(error => {
+        console.log(error);
         setErrorMessages(["Cannot add data. Server error!"])
         setIserror(true)
         resolve()

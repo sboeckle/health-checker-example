@@ -39,14 +39,15 @@ const api = axios.create({
 
 function App() {
   var columns = [
-    {title: "id", field: "id"},
-    {title: "name", field: "name"},
-    {title: "url", field: "url"},
-    {title: "status", field: "status"},
-    {title: "createdAt", field: "createdAt"},
-    {title: "updatedAt", field: "updatedAt"},
-    {title: "userId", field: "userId"}
+    {title: 'id', field: 'id'},
+    {title: 'name', field: 'name'},
+    {title: 'url', field: 'url'},
+    {title: 'status', field: 'status', editable: 'never'},
+    {title: 'createdAt', field: 'createdAt', editable: 'never'},
+    {title: 'updatedAt', field: 'updatedAt', editable: 'never'},
+    {title: 'userId', field: 'userId'}
   ]
+
   const [data, setData] = useState([]);
   const [iserror, setIserror] = useState(false)
   const [errorMessages, setErrorMessages] = useState([])
@@ -75,85 +76,59 @@ function App() {
     return errorList
   }
 
-  /**
-   * removes fields not ment to sent on writing calls
-   * @param {*} service 
-   */
-  const sanitizeWriteParams = (service) => {
-    const updateFields = {...service};
-    delete updateFields.updatedAt;
-    delete updateFields.createdAt;
-    return updateFields;
-  }
-
-  const handleRowUpdate = (newData, oldData, resolve) => {
-    let errorList = validateServiceFields(newData);
-    const updateData = sanitizeWriteParams(newData)
-    if(errorList.length < 1){
-      api.put("/services/"+newData.id, updateData)
-      .then(res => {
-        const tmp = [...data];
-        tmp[oldData.tableData.id] = res.data;
-        setData([...tmp]);
-        resolve()
-        setIserror(false)
-        setErrorMessages([])
-      })
-      .catch(error => {
-        console.log(error);
-        setErrorMessages(["Update failed! Server error"])
+  const onRowUpdate = async (newData, oldData) => {
+    try {
+      let errorList = validateServiceFields(newData);
+      if(errorList.length > 1){
+        setErrorMessages(errorList)
         setIserror(true)
-        resolve()
-      })
-    }else{
-      setErrorMessages(errorList)
+        return
+      }
+      const updatedService = await api.put("/services/" + newData.id, newData)
+      const tmp = [...data];
+      tmp[oldData.tableData.id] = updatedService;
+      setData([...tmp]);
+      setIserror(false)
+      setErrorMessages([])
+    } catch(err) {
+      console.log(err);
+      setErrorMessages(["Update failed! Server error"])
       setIserror(true)
-      resolve()
     }
-    
   }
 
-  const handleRowAdd = (newData, resolve) => {
+  const onRowAdd = async newData => {
     let errorList = validateServiceFields(newData);
     if(errorList.length < 1){
-      api.post("/services", newData)
-      .then(res => {
+      try {
+        const res = await api.post("/services", newData)
         let tmp = [...data];
         tmp.push(res.data);
         setData(tmp);
-        resolve()
         setErrorMessages([])
         setIserror(false)
-      })
-      .catch(error => {
-        console.log(error);
+      } catch(err) {
+        console.log(err);
         setErrorMessages(["Cannot add data. Server error!"])
         setIserror(true)
-        resolve()
-      })
-    }else{
+      }
+    } else{
       setErrorMessages(errorList)
       setIserror(true)
-      resolve()
     }
-
-    
   }
 
-  const handleRowDelete = (oldData, resolve) => {
-    api.delete("/services/"+oldData.id)
-      .then(res => {
-        const dataDelete = [...data];
-        const index = oldData.tableData.id;
-        dataDelete.splice(index, 1);
-        setData([...dataDelete]);
-        resolve()
-      })
-      .catch(error => {
-        setErrorMessages(["Delete failed! Server error"])
-        setIserror(true)
-        resolve()
-      })
+  const onRowDelete = async oldData => {
+    try{
+      await api.delete("/services/"+oldData.id)
+      const dataDelete = [...data];
+      dataDelete.splice(oldData.tableData.id, 1);
+      setData([...dataDelete]);
+    } catch (err) {
+      console.log(err);
+      setErrorMessages(["Delete failed! Server error"])
+      setIserror(true)
+    }
   }
 
 
@@ -174,18 +149,9 @@ function App() {
               data={data}
               icons={tableIcons}
               editable={{
-                onRowUpdate: (newData, oldData) =>
-                  new Promise((resolve) => {
-                      handleRowUpdate(newData, oldData, resolve);
-                  }),
-                onRowAdd: (newData) =>
-                  new Promise((resolve) => {
-                    handleRowAdd(newData, resolve)
-                  }),
-                onRowDelete: (oldData) =>
-                  new Promise((resolve) => {
-                    handleRowDelete(oldData, resolve)
-                  }),
+                onRowUpdate,
+                onRowAdd,
+                onRowDelete
               }}
               options={{
                 paging: false

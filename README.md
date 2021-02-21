@@ -1,40 +1,44 @@
-# Vertx Web Api Service Example
+## Health Checker Example
 
-This example shows you a complete working application with [vertx-web-api-service](https://vertx.io/docs/vertx-web-api-service/java/) & [vertx-web-api-contract](https://vertx.io/docs/vertx-web-api-contract/java/).
+Simple service for periodically polling of urls.
+A CRUD REST API is provided for handling multiple services.
+A React app os provided as simple UI.
 
-You have three packages:
 
-* `models`: Contains all models of your application. They are annotated as `@DataObject` so you can use it in other Vert.x interfaces.
-* `persistence`: Contains the interfaces and implementations of persistence of your application.
-* `services`: Contains the Web Api Services interfaces and implementations
+## Service
 
-The class `WebApiServiceExampleMainVerticle` contains the code that bootstrap your router using `OpenAPI3RouterFactory` and mounts your services on event bus with `ServiceBinder`.
+- The REST Service is implemented with vert.x and built on top of the vert.x web api service example [vertx-web-api-service](https://vertx.io/docs/vertx-web-api-service/java/)
+- The `WebApiServiceMainVerticle` is the main class, it creates and handles
+  - `ServiceManagerService` - a router with routes based on the `src/main/resources/openapi.json` specification using `OpenAPI3RouterFactory`
+    - Handles the Services that should be polled. Does this with a injected persistance (currently a Map that is saved to file on writes) that can be exchanged later
+  - `ServicePoller` - periodically polling defined services
+    - Queries the Services from the ServiceManagerService, polls their urls and saves the response into the services as status
+    - currently it polls every 3000ms
 
-You can find the OpenAPI spec under `resources/openapi.json`
+Notes
 
-## Run
+- Poller writes status of services ('OK','FAIL') after polling as well as updates `updatedAt` Field
 
-On this directory run:
+## UI
 
+A simple react UI was generated for beeing able to work with the REST Service.
+It offers CRUD operations on the services API via a simple table (MaterialTable)
+
+## Run it
+
+**Service**
 ```bash
 mvn clean package
-java -jar target/web-api-service-example-4.0.2-fat.jar
+java -jar target/health-checker-service-4.0.2-fat.jar
 ```
+- service is started and API is served on http://localhost:8080/api check console.logs for success
+- check `src/main/resources/openapi.json` for available routes
 
-Then post a service with `curl`:
+**UI**
 
 ```bash
-curl --header "Content-Type: application/json" \
-  --request POST \
-  --data '{"id": "xdg-hjhj98", "from":"thomas@example.com","to":"francesco@example.com", "message": "items", "value": 45.67}' \
-  http://localhost:8080/api/transactions
-
-
-curl http://localhost:8080/api/transactions
+cd ./health-checker-app
+npm i
+npm start
 ```
-
-Eventually check the recorded transactions:
-
-```bash
-curl http://localhost:8080/api/transactions
-```
+-> browser should start on http://localhost:3000

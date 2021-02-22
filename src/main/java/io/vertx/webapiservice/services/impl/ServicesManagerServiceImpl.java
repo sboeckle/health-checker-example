@@ -50,8 +50,12 @@ public class ServicesManagerServiceImpl implements ServicesManagerService {
   public void createService(
     Service body,
     ServiceRequest request, Handler<AsyncResult<ServiceResponse>> resultHandler) {
-    Service serviceAdded = persistence.addService(body);
-    resultHandler.handle(Future.succeededFuture(ServiceResponse.completedWithJson(serviceAdded.toJson())));
+    try{
+      Service serviceAdded = persistence.addService(body);
+      resultHandler.handle(Future.succeededFuture(ServiceResponse.completedWithJson(serviceAdded.toJson())));
+    } catch (IllegalArgumentException iae){
+      resultHandler.handle(Future.succeededFuture(new ServiceResponse().setStatusCode(400).setStatusMessage(iae.getMessage())));
+    }
   }
 
   @Override
@@ -70,7 +74,7 @@ public class ServicesManagerServiceImpl implements ServicesManagerService {
     String serviceId,
     Service body,
     ServiceRequest request, Handler<AsyncResult<ServiceResponse>> resultHandler) {
-    if (persistence.updateService(serviceId, body))
+    if (persistence.updateService(serviceId, body, true))
       resultHandler.handle(Future.succeededFuture(ServiceResponse.completedWithJson(body.toJson())));
     else
       resultHandler.handle(Future.succeededFuture(new ServiceResponse().setStatusCode(404).setStatusMessage("Not Found")));

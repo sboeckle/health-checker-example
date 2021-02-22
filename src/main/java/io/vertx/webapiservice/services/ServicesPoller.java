@@ -3,7 +3,6 @@ package io.vertxwebapiservice.services;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.core.http.HttpClient;
 import io.vertxwebapiservice.persistence.ServicePersistence;
-import io.vertxwebapiservice.services.impl.ServicesManagerServiceImpl;
 import io.vertxwebapiservice.services.impl.ServicesPollerImpl;
 
 @ProxyGen

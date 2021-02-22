@@ -42,10 +42,11 @@ function App() {
     {title: 'id', field: 'id'},
     {title: 'name', field: 'name'},
     {title: 'url', field: 'url'},
+    {title: 'userId', field: 'userId'},
     {title: 'status', field: 'status', editable: 'never'},
+    {title: 'lastCheckedAt', field: 'lastCheckedAt', editable: 'never'},
     {title: 'createdAt', field: 'createdAt', editable: 'never'},
-    {title: 'updatedAt', field: 'updatedAt', editable: 'never'},
-    {title: 'userId', field: 'userId'}
+    {title: 'updatedAt', field: 'updatedAt', editable: 'never'}
   ]
 
   const [data, setData] = useState([]);
@@ -76,17 +77,31 @@ function App() {
     return errorList
   }
 
+  /**
+   * sanitizes data for a write request (POST & PUT)
+   * i.e. deletes meta fields which are not allowed to be written by REST api
+   * @param {*} newData 
+   */
+  const sanitizeWriteRequest = (newData) => {
+    const serviceData = {...newData}
+    delete serviceData.createdAt
+    delete serviceData.updatedAt
+    delete serviceData.lastCheckedAt
+    return serviceData
+  }
+
   const onRowUpdate = async (newData, oldData) => {
     try {
       let errorList = validateServiceFields(newData);
+      const updateData = sanitizeWriteRequest(newData)
       if(errorList.length > 1){
         setErrorMessages(errorList)
         setIserror(true)
         return
       }
-      const updatedService = await api.put("/services/" + newData.id, newData)
+      const updatedService = await api.put("/services/" + newData.id, updateData)
       const tmp = [...data];
-      tmp[oldData.tableData.id] = updatedService;
+      tmp[oldData.tableData.id] = updatedService.data;
       setData([...tmp]);
       setIserror(false)
       setErrorMessages([])
@@ -99,9 +114,10 @@ function App() {
 
   const onRowAdd = async newData => {
     let errorList = validateServiceFields(newData);
+    const serviceData = sanitizeWriteRequest(newData)
     if(errorList.length < 1){
       try {
-        const res = await api.post("/services", newData)
+        const res = await api.post("/services", serviceData)
         let tmp = [...data];
         tmp.push(res.data);
         setData(tmp);

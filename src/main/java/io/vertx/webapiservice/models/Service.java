@@ -12,6 +12,7 @@ public class Service {
   private String url;
   private String userId;
   private String status;
+  private String lastCheckedAt;
   private String createdAt;
   private String updatedAt;
 
@@ -37,6 +38,7 @@ public class Service {
     this.url = other.getUrl();
     this.userId = other.getUserId();
     this.status = other.getStatus();
+    this.lastCheckedAt = other.getCreatedAt();
     this.createdAt = other.getCreatedAt();
     this.updatedAt = other.getUpdatedAt();
   }
@@ -86,6 +88,13 @@ public class Service {
     return this;
   }
   public String getCreatedAt() {return createdAt;}
+
+  @Fluent
+  public Service setLastCheckedAt(String lastCheckedAt) {
+    this.lastCheckedAt = lastCheckedAt;
+    return this;
+  }
+  public String getLastCheckedAt() {return lastCheckedAt;}
 
   @Fluent
   public Service setUpdatedAt(String updatedAt) {

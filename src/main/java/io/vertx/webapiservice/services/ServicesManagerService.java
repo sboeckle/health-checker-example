@@ -1,7 +1,5 @@
 package io.vertxwebapiservice.services;
 
-import io.vertx.codegen.annotations.ProxyGen;
-import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -12,12 +10,6 @@ import io.vertx.ext.web.api.service.ServiceRequest;
 import io.vertx.ext.web.api.service.ServiceResponse;
 import io.vertx.ext.web.api.service.WebApiServiceGen;
 
-import java.util.List;
-
-/**
- * This interface describes the Transactions Manager Service. Note that all methods has same name of corresponding operation id
- *
- */
 @WebApiServiceGen
 public interface ServicesManagerService {
 

@@ -26,11 +26,11 @@ public class ServicePersistenceImpl implements ServicePersistence {
     public ServicePersistenceImpl(Vertx vertx) {
         this.vertx = vertx;
         services = new HashMap<String, Service>();
-        initPersistance();
+        initPersistence();
         readFromFile();
     }
 
-    private void initPersistance() {
+    private void initPersistence() {
       try {
         Files.createFile(Path.of(fileName));
       } catch (FileAlreadyExistsException e) {
@@ -68,10 +68,9 @@ public class ServicePersistenceImpl implements ServicePersistence {
           Buffer.buffer(json.toString()),
           result -> {
             if (result.succeeded()) {
-              System.out.println("wrote it" + result.toString());
+              System.out.println("success: write persistence file");
             } else {
-              System.err.println("did" +
-                  " not write it");
+              System.err.println("failed: write persistence file");
             }
           });
     }
@@ -94,8 +93,8 @@ public class ServicePersistenceImpl implements ServicePersistence {
     @Override
     public Service addService(Service t) {
       Date now = new Date();
-      t.setCreatedAt(now.toString());
-      t.setUpdatedAt(now.toString());
+      t.setCreatedAt(now.toString())
+          .setUpdatedAt(now.toString());
       services.put(t.getId(), t);
       saveToFile();
       return t;
@@ -112,13 +111,30 @@ public class ServicePersistenceImpl implements ServicePersistence {
     }
 
     @Override
-    public boolean updateService(String serviceId, Service service) {
+    public boolean updateService(String serviceId, Service service, boolean updateMeta) {
       Service current = services.get(serviceId);
       if (current == null) { return false; }
       service.setCreatedAt(current.getCreatedAt());
       service.setUpdatedAt(new Date().toString());
+      if(!current.getUrl().equals(service.getUrl())) {
+        service.setLastCheckedAt(null);
+        service.setStatus(null);
+      }
       services.replace(serviceId, service);
       saveToFile();
       return true;
+    }
+
+  @Override
+    public void updateStatus(String serviceId, Service service, boolean isOk, String checkedAt) {
+      Service current = services.get(serviceId);
+      if (current == null) {
+        System.err.println("failed: trying to update status of not found service");
+        return;
+      }
+      service.setStatus(isOk ? "OK" : "FAIL");
+      service.setLastCheckedAt(checkedAt);
+      services.replace(serviceId, service);
+      saveToFile();
     }
 }

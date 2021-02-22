@@ -8,9 +8,7 @@ import io.vertxwebapiservice.persistence.ServicePersistence;
 import io.vertxwebapiservice.services.ServicesManagerService;
 import io.vertxwebapiservice.services.ServicesPoller;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.CorsHandler;
-import io.vertx.ext.web.openapi.OpenAPILoaderOptions;
 import io.vertx.ext.web.openapi.RouterBuilder;
 import io.vertx.serviceproxy.ServiceBinder;
 import org.slf4j.Logger;
@@ -46,7 +44,6 @@ public class WebApiServiceMainVerticle extends AbstractVerticle {
 
   /**
    * Configure router with CORS support for REST APIs. Allows * for now
-   * @return
    */
   private void configureCors(Router router) {
     Set<String> allowedHeaders = new HashSet<>();
@@ -68,7 +65,6 @@ public class WebApiServiceMainVerticle extends AbstractVerticle {
 
   /**
    * This method constructs the router factory, mounts services and handlers and starts the http server with built router
-   * @return
    */
   private Future<Void> startHttpServer() {
     Router mainRouter = Router.router(vertx);

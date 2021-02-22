@@ -8,6 +8,7 @@ import io.vertxwebapiservice.models.Service;
 import io.vertxwebapiservice.persistence.ServicePersistence;
 import io.vertxwebapiservice.services.ServicesPoller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,8 +28,7 @@ public class ServicesPollerImpl implements ServicesPoller {
   }
 
   private void setServiceStatus(Service service, boolean isOk) {
-    service.setStatus(isOk ? "OK" : "FAIL");
-    persistence.updateService(service.getId(), service);
+    persistence.updateStatus(service.getId(), service, isOk, new Date().toString());
   }
 
   private void makeServiceCheck(Service service) {

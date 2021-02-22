@@ -8,18 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-/**
- * This interface represents a persistence layer of your application
- *
- * @author slinkydeveloper
- */
 public interface ServicePersistence {
 
-  /**
-   * Factory method to instantiate ServicePersistence
-   *
-   * @return
-   */
   static ServicePersistence create(Vertx vertx) {
     return new ServicePersistenceImpl(vertx);
   }
@@ -34,5 +24,7 @@ public interface ServicePersistence {
 
   boolean removeService(String serviceId);
 
-  boolean updateService(String serviceId, Service service);
+  boolean updateService(String serviceId, Service service, boolean updateMeta);
+
+  void updateStatus(String serviceId, Service service, boolean isOk, String checkedAt);
 }

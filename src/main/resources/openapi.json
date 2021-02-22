@@ -19,7 +19,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Service"
+                    "$ref": "#/components/schemas/ServiceBase"
                   }
                 }
               }
@@ -38,7 +38,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Service"
+                "$ref": "#/components/schemas/ServiceBase"
               }
             }
           }
@@ -73,7 +73,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Service"
+                  "$ref": "#/components/schemas/ServiceResponse"
                 }
               }
             }
@@ -91,7 +91,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Service"
+                "$ref": "#/components/schemas/ServiceBase"
               }
             }
           }
@@ -102,7 +102,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Service"
+                  "$ref": "#/components/schemas/ServiceResponse"
                 }
               }
             }
@@ -128,7 +128,7 @@
   },
   "components": {
     "schemas": {
-      "Service": {
+      "ServiceBase": {
         "type": "object",
         "properties": {
           "id": {
@@ -140,11 +140,26 @@
           "url": {
             "type": "string"
           },
+          "userId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "url"
+        ]
+      },
+      "ServiceResponse": {
+        "allOf": [{"$ref": "#/components/schemas/ServiceBase"}],
+        "type": "object",
+        "properties": {
           "status": {
             "type": "string"
           },
-          "userId": {
-            "type": "string"
+          "lastCheckedAt": {
+            "type": "string",
+            "format": "date-time"
           },
           "createdAt": {
             "type": "string",
@@ -153,20 +168,6 @@
           "updatedAt": {
             "type": "string",
             "format": "date-time"
-          }
-        },
-        "additionalProperties": false,
-        "required": [
-          "id",
-          "name",
-          "url"
-        ]
-      },
-      "User": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
           }
         }
       }

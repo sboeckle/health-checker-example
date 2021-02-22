@@ -12,16 +12,16 @@ A React app os provided as simple UI.
     - Handles the Services that should be polled. Does this with a injected persistance (currently a Map that is saved to file on writes) that can be exchanged later
     - saves JSON in `services.serialized` file
   - `ServicePoller` - periodically polling defined services
-    - Queries the Services from the ServiceManagerService, polls their urls and saves the response into the services as status
-    - currently it polls every 3000ms
+    - Queries the Services from the ServiceManagerService, polls their urls updates the services accordingly
+    - currently, it polls every 3000ms
 
 Notes
 
-- Poller writes status of services ('OK','FAIL') after polling as well as updates `updatedAt` Field
+- Poller writes status of services `status` ('OK','FAIL') after polling as well as updates the `lastCheckedAt` field
 
 ## UI
 
-A simple react UI was generated for beeing able to work with the REST Service.
+A simple react UI was generated for being able to work with the REST Service.
 It offers CRUD operations on the services API via a simple table (MaterialTable)
 
 ## Run it

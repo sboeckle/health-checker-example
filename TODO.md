@@ -1,5 +1,7 @@
-- make things configureable
+- make things configurable
   - polling time
   - address and ports of service and app
-- use DB as persistance
-  - then services userId can be used for multi user support
+- use DB as persistence
+  - then services userId can be used for multi user support (sqlite / mongoDB / Redis)
+- add URL validation
+- re-render react app on data change or on based on time

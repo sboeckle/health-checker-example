@@ -63,6 +63,8 @@ function App() {
          })
   }, [])
 
+  const isValidUrl = url => /^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/.test(url)
+
   const validateServiceFields = (service) => {
     let errorList = []
     if(!service.id || service.id === ""){
@@ -71,8 +73,8 @@ function App() {
     if(!service.name || service.name === ""){
       errorList.push("Please set name")
     }
-    if(!service.url || service.url === ""){
-      errorList.push("Please set url")
+    if(!service.url || !isValidUrl(service.url)){
+      errorList.push("Please set a valid url")
     }
     return errorList
   }

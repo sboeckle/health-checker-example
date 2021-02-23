@@ -1,9 +1,7 @@
 package io.vertxwebapiservice.services.impl;
 
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpClientRequest;
-import io.vertx.core.http.HttpClientResponse;
-import io.vertx.core.http.HttpMethod;
+import io.vertx.core.VertxException;
+import io.vertx.ext.web.client.WebClient;
 import io.vertxwebapiservice.models.Service;
 import io.vertxwebapiservice.persistence.ServicePersistence;
 import io.vertxwebapiservice.services.ServicesPoller;
@@ -14,8 +12,8 @@ import java.util.Optional;
 
 public class ServicesPollerImpl implements ServicesPoller {
   ServicePersistence persistence;
-  HttpClient client;
-  public ServicesPollerImpl(ServicePersistence persistence, HttpClient client) {
+  WebClient client;
+  public ServicesPollerImpl(ServicePersistence persistence, WebClient client) {
     this.persistence = persistence;
     this.client = client;
   }
@@ -32,21 +30,20 @@ public class ServicesPollerImpl implements ServicesPoller {
   }
 
   private void makeServiceCheck(Service service) {
-    client.request(HttpMethod.GET, 80, service.getUrl(), "/", ar1 -> {
-      if (ar1.succeeded()) {
-        HttpClientRequest request = ar1.result();
-        request.send(ar2 -> {
-          if (ar2.succeeded()) {
+    try{
+      client.getAbs(service.getUrl())
+          .send()
+          .onSuccess(res -> {
+            System.out.println("Received response with status code" + res.statusCode());
             setServiceStatus(service, true);
-          } else {
-            ar2.cause().printStackTrace();
+          })
+          .onFailure(err -> {
+            System.out.println("Something went wrong " + err.getMessage());
             setServiceStatus(service, false);
-          }
-        });
-      } else {
-        ar1.cause().printStackTrace();
-        setServiceStatus(service, false);
-      }
-    });
+          });
+    } catch(VertxException ve) {
+      System.out.println("Something went wrong " + ve.getMessage());
+      setServiceStatus(service, false);
+    }
   }
 }

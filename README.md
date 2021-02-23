@@ -13,16 +13,23 @@ A React app os provided as simple UI.
     - saves JSON in `services.serialized` file
   - `ServicePoller` - periodically polling defined services
     - Queries the Services from the ServiceManagerService, polls their urls updates the services accordingly
+      - writes field services `status` ('OK','FAIL') after polling as well as updates the `lastCheckedAt` field
     - currently, it polls every 3000ms
+  
+Features:
 
-Notes
-
-- Poller writes status of services `status` ('OK','FAIL') after polling as well as updates the `lastCheckedAt` field
-
+- CRUD operations based on REST API (`src/main/resources/openapi.json`)
+- simple validation of URLs by Regex (returns general 400 on wrong params, see also openapi.json for regex)
+  
 ## UI
 
 A simple react UI was generated for being able to work with the REST Service.
-It offers CRUD operations on the services API via a simple table (MaterialTable)
+
+Features:
+
+- CRUD services via MaterialTable
+- showing of tables form errors
+  - simple validation of services URLs by Regex (see `./health-checker-app/App.js` isValidUrl() )
 
 ## Run it
 

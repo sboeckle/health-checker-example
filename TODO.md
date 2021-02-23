@@ -1,7 +1,8 @@
 - make things configurable
   - polling time
+  - connection timeout
   - address and ports of service and app
 - use DB as persistence
   - then services userId can be used for multi user support (sqlite / mongoDB / Redis)
-- add URL validation
+- extend request capabilities (WebClients getAbs()) to be able to fetch everything that the regex of the service allows
 - re-render react app on data change or on based on time

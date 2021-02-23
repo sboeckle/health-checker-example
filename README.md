@@ -20,6 +20,10 @@ Features:
 
 - CRUD operations based on REST API (`src/main/resources/openapi.json`)
 - simple validation of URLs by Regex (returns general 400 on wrong params, see also openapi.json for regex)
+- timeouts for the calls are handled, service must respond <= 1000ms (see `WebApiServiceMainVerticle.startServicesPoller`)
+- ServicePoller uses Vert.x WebClient.getAbs(String uri) function. Given Urls therefore must be compatible e.g.
+  - www.google.com will be accepted by API but service check will fail due to unsupported URL format 
+  - http://www.google.com will be OK
   
 ## UI
 
@@ -30,6 +34,13 @@ Features:
 - CRUD services via MaterialTable
 - showing of tables form errors
   - simple validation of services URLs by Regex (see `./health-checker-app/App.js` isValidUrl() )
+- When adding new services fields concerning status will be blank and will be filled by Polling service
+  - therefore, site needs to be reloaded manually to see
+- changing services URL will reset status fields
+
+**Preview**
+
+![ui.png](ui.png)
 
 ## Run it
 

@@ -38,7 +38,8 @@ public class WebApiServiceMainVerticle extends AbstractVerticle {
   private void startServicesPoller(ServicePersistence persistence) {
     WebClient client = WebClient.create(vertx, new WebClientOptions()
             .setTrustAll(true)
-            .setKeepAlive(false));
+            .setKeepAlive(false)
+            .setConnectTimeout(1000));
     ServicesPoller servicesPoller = ServicesPoller.create(persistence, client);
     vertx.setPeriodic(3000, id -> servicesPoller.poll());
     consumer = serviceBinder
